@@ -23,10 +23,34 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <script type="text/javascript">
     document.addEventListener('DOMContentLoaded', () => {
-        if ()
+        let cookieObj = {};
+        document.cookie.split('; ').forEach(pair => {
+            let cookiePair = pair.split('=');
+            cookieObj[cookiePair[0]] = cookiePair[1];
+        })
 
-        if (!window.localStorage.getItem('queue')) {
-            window.localStorage.setItem('queue', { id: <?= $id ?>, time: <?= $time ?> });
+        <?php if (isset($id) && isset($time)): ?>
+            if (typeof cookieObj.eqpk == 'undefined' || cookieObj.eqpk == null) {
+                document.cookie = `eqpk=<?= $id ?>_<?= $time ?>; path=/; expires=${(new Date(Date.now() + 86400e3)).toUTCString()}; samesite;`
+                cookieObj.eqpk = '<?= $id ?>_<?= $time ?>';
+            }
+        <?php else: ?>
+            if (typeof cookieObj.eqpk == 'undefined' || cookieObj.eqpk == null) {
+                window.location.href = `${window.location.origin}/queue/register`;
+            }
+        <?php endif; ?>
+
+        if (cookieObj.eqpk) {
+            setInterval(() => {
+                fetch(`${window.location.origin}/queue/check?token=${cookieObj.eqpk}`).then(response => {
+                    if (response.status == 401) {
+                        document.cookie = '';
+                        window.location.href = `${window.location.origin}/queue/register`;
+                    } else if (response.status == 200) {
+                        response.json().then()
+                    }
+                })
+            }, 1000);
         }
     })
 </script>

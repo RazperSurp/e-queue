@@ -19,3 +19,13 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     </div>
 </div>
+
+<script type="text/javascript">
+    let cookieObj = {};
+    document.cookie.split('; ').forEach(pair => {
+        let cookiePair = pair.split('=');
+        obj[cookiePair[0]] = cookiePair[1];
+    })
+
+    if (cookieObj.eqpk) window.location.href = `${window.location.origin}/queue/position`;
+</script>

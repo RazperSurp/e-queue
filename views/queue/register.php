@@ -37,3 +37,12 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     <?php ActiveForm::end() ?>
 </div>
+<script type="text/javascript">
+    let cookieObj = {};
+    document.cookie.split('; ').forEach(pair => {
+        let cookiePair = pair.split('=');
+        cookieObj[cookiePair[0]] = cookiePair[1];
+    })
+
+    if (cookieObj.eqpk) window.location.href = `${window.location.origin}/queue/position?token=${cookieObj.eqpk}`;
+</script>

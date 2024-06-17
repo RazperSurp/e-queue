@@ -79,11 +79,21 @@ class Clients extends \yii\db\ActiveRecord
         $model->time = $time;
 
         if ($model->save()) return ['id' => $model->id, 'time' => $model->time];
+        else throw new \yii\web\HttpException(500, 'Регистрация не завершена из-за ошибки сервера.');
+    }
+
+    public static function checkQueue($token) {
+        list($id, $time) = explode('_', $token);
+        $model = self::findOne(['id' => $id, 'time' => $time]);
+        if ($model && isset($model->employees_positions_id)) {
+            return [
+                'employee' => $model->employeesPositions->employees->strgPosts->name . ' '. $model->employeesPositions->employees->users->fullName(),
+                'position' => $model->employeesPositions->position_id
+            ];
+        }
+        else if ($model && !isset($model->employees_positions_id)) throw new \yii\web\HttpException(204);
         else {
-            echo '<pre>';
-            print_r($model->errors);
-            exit;
-            throw new \yii\web\HttpException(500, 'Регистрация не завершена из-за ошибки сервера.');
-        } 
+            throw new \yii\web\HttpException(401, 'Неверный регистрационный токен');
+        }
     }
 }

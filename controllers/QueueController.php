@@ -72,6 +72,8 @@ class QueueController extends Controller
      */
     public function actionRegister()
     {
+        if ($_COOKIE['eqpk']) $this->redirect("position?token=". $_COOKIE['eqpk']);
+
         if (!Yii::$app->request->isPost) return $this->render('register', ['model' => new Clients()]);
         else return $this->render('position', Clients::addNew(Yii::$app->request->post()));
     }
@@ -81,8 +83,19 @@ class QueueController extends Controller
      *
      * @return string
      */
-    public function actionPosition()
+    public function actionPosition($token)
     {
-        return $this->render('position');
+        list($id, $time) = explode('_', $token);
+        return $this->render('position', ['id' => $id, 'time' => $time]);
+    }
+
+    /**
+     * Displays about page.
+     *
+     * @return string
+     */
+    public function actionCheck($token) {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        return Clients::checkQueue($token);
     }
 }

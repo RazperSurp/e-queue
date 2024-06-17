@@ -63,4 +63,14 @@ class Users extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Employees::class, ['users_id' => 'id']);
     }
+
+    public function getFullName($shortMode = false) {
+        return $this->secondname 
+            .' '. ($shortMode ? (
+                mb_substr($this->firstname, 0, 1) . '.'
+            ) : $this->firstname)
+            .' '. ($shortMode ? (
+                mb_substr($this->thirdname, 0, 1) . '.'
+            ) : $this->thirdname);
+    }
 }
